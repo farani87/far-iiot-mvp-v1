@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import BrokerManager from './pages/BrokerManager.jsx'
-import DeviceOnboarding from './pages/DeviceOnboarding.jsx'
+import DevicesPage from './pages/DevicesPage.jsx'
 
 const TABS = [
     { id: 'brokers', label: 'MQTT Brokers', icon: '⚡' },
-    { id: 'device', label: 'Device & Publisher', icon: '🏭' },
+    { id: 'devices', label: 'Devices', icon: '🏭' },
 ]
 
 export default function App() {
@@ -29,11 +29,9 @@ export default function App() {
                             <p className="text-xs" style={{ color: '#475569' }}>Industrial Monitoring Platform</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs px-2 py-1 rounded-full font-medium" style={{ background: '#0d2d1e', color: '#10b981', border: '1px solid #10b981' }}>
-                            MVP v1.0
-                        </span>
-                    </div>
+                    <span className="text-xs px-2 py-1 rounded-full font-medium" style={{ background: '#0d2d1e', color: '#10b981', border: '1px solid #10b981' }}>
+                        MVP v1.0
+                    </span>
                 </div>
                 {/* Tab Nav */}
                 <nav className="px-4 flex gap-1 pb-0">
@@ -59,7 +57,7 @@ export default function App() {
             <main className="flex-1 overflow-auto">
                 <div className="fade-in">
                     {activeTab === 'brokers' && <BrokerManager />}
-                    {activeTab === 'device' && <DeviceOnboarding />}
+                    {activeTab === 'devices' && <DevicesPage />}
                 </div>
             </main>
         </div>
