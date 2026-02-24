@@ -9,7 +9,7 @@ import { buildBrokerUrl } from '../utils/brokerPresets.js'
  *   transforms via metric groups, publishes to target broker on UNS target topic.
  * - When inactive: gracefully disconnects.
  */
-export function useRepublisher({ active, sourceBroker, sourceTopic, targetBroker, targetTopic, metricGroups }) {
+export function useRepublisher({ active, sourceBroker, sourceTopic, targetBroker, targetTopic, metricGroups, unsInfo }) {
     const clientRef = useRef(null)
 
     useEffect(() => {
@@ -55,7 +55,11 @@ export function useRepublisher({ active, sourceBroker, sourceTopic, targetBroker
             try {
                 const raw = JSON.parse(payload.toString())
                 const mapped = applyMapping(raw, metricGroups)
-                const final = { ...mapped, processed_at: new Date().toISOString() }
+                const final = {
+                    _uns: unsInfo || {},
+                    ...mapped,
+                    processed_at: new Date().toISOString(),
+                }
                 if (tgtClient && tgtClient.connected) {
                     tgtClient.publish(targetTopic, JSON.stringify(final), { qos: 0 })
                 }
@@ -71,5 +75,5 @@ export function useRepublisher({ active, sourceBroker, sourceTopic, targetBroker
             try { tgtClient.end(true) } catch { }
             clientRef.current = null
         }
-    }, [active, sourceBroker?.id, sourceTopic, targetBroker?.id, targetTopic, metricGroups])
+    }, [active, sourceBroker?.id, sourceTopic, targetBroker?.id, targetTopic, metricGroups, unsInfo])
 }

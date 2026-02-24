@@ -51,9 +51,20 @@ export default function DeviceOnboarding() {
     useEffect(() => { saveDeviceConfig(config) }, [config])
     useEffect(() => { saveMetricGroups(metricGroups) }, [metricGroups])
 
+    // UNS metadata block — included in every transformed payload
+    const unsInfo = {
+        namespace: config.namespace,
+        site: config.site,
+        area: config.area,
+        line: config.line,
+        cell: config.cell,
+        device: config.device,
+        topic: targetTopic,
+    }
+
     // Compute live preview
     const livePreview = rawSample
-        ? { ...applyMapping(rawSample, metricGroups), processed_at: new Date().toISOString() }
+        ? { _uns: unsInfo, ...applyMapping(rawSample, metricGroups), processed_at: new Date().toISOString() }
         : null
 
     // Derived broker objects
@@ -68,6 +79,7 @@ export default function DeviceOnboarding() {
         targetBroker,
         targetTopic,
         metricGroups,
+        unsInfo,
     })
 
     // Fetch sample payload by subscribing briefly
