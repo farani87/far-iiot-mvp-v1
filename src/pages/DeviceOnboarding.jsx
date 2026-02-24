@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import mqttLib from 'mqtt'
 import { getBrokers } from '../utils/storage.js'
 import { getDeviceConfig, saveDeviceConfig, getMetricGroups, saveMetricGroups } from '../utils/storage.js'
 import { applyMapping } from '../utils/mapper.js'
+import { buildBrokerUrl } from '../utils/brokerPresets.js'
 import { useRepublisher } from '../hooks/useRepublisher.js'
 import FormField, { Input, Select, Btn } from '../components/FormField.jsx'
 import JsonTreeView from '../components/JsonTreeView.jsx'
@@ -82,8 +83,7 @@ export default function DeviceOnboarding() {
             try { fetchClientRef.current.end(true) } catch { }
         }
 
-        const url = sourceBroker.wsUrl.startsWith('ws') ? sourceBroker.wsUrl : `ws://${sourceBroker.wsUrl}`
-        const fullUrl = sourceBroker.port ? `${url}:${sourceBroker.port}` : url
+        const fullUrl = buildBrokerUrl(sourceBroker)
 
         const client = mqttLib.connect(fullUrl, {
             clientId: `fetch-${Math.random().toString(16).slice(2)}`,

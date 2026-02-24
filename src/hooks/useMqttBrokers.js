@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import mqttLib from 'mqtt'
 import { getBrokers, saveBrokers } from '../utils/storage.js'
+import { buildBrokerUrl } from '../utils/brokerPresets.js'
 import { v4 as uuidv4 } from 'uuid'
 
 export function useMqttBrokers() {
@@ -30,8 +31,7 @@ export function useMqttBrokers() {
 
         setStatus(broker.id, 'connecting')
 
-        const url = broker.wsUrl.startsWith('ws') ? broker.wsUrl : `ws://${broker.wsUrl}`
-        const fullUrl = broker.port ? `${url}:${broker.port}` : url
+        const fullUrl = buildBrokerUrl(broker)
 
         try {
             const client = mqttLib.connect(fullUrl, {

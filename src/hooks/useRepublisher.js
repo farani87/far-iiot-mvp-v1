@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import mqttLib from 'mqtt'
 import { applyMapping } from '../utils/mapper.js'
+import { buildBrokerUrl } from '../utils/brokerPresets.js'
 
 /**
  * Manages the "republishing" lifecycle:
@@ -26,8 +27,7 @@ export function useRepublisher({ active, sourceBroker, sourceTopic, targetBroker
         let srcClient = null
         let tgtClient = null
 
-        const srcUrl = sourceBroker.wsUrl.startsWith('ws') ? sourceBroker.wsUrl : `ws://${sourceBroker.wsUrl}`
-        const srcFullUrl = sourceBroker.port ? `${srcUrl}:${sourceBroker.port}` : srcUrl
+        const srcFullUrl = buildBrokerUrl(sourceBroker)
 
         srcClient = mqttLib.connect(srcFullUrl, {
             clientId: `republish-src-${Math.random().toString(16).slice(2)}`,
@@ -37,8 +37,7 @@ export function useRepublisher({ active, sourceBroker, sourceTopic, targetBroker
             clean: true,
         })
 
-        const tgtUrl = targetBroker.wsUrl.startsWith('ws') ? targetBroker.wsUrl : `ws://${targetBroker.wsUrl}`
-        const tgtFullUrl = targetBroker.port ? `${tgtUrl}:${targetBroker.port}` : tgtUrl
+        const tgtFullUrl = buildBrokerUrl(targetBroker)
 
         tgtClient = mqttLib.connect(tgtFullUrl, {
             clientId: `republish-tgt-${Math.random().toString(16).slice(2)}`,
